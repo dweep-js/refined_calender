@@ -24,8 +24,7 @@ const birthdays = {
     "11-20": "🎂 Tim's Birthday",
     "11-25": "🎂 David's Birthday",
     "12-5": "🎂 julu's Birthday",
-    "12-5": "🎂 Theo's Birthday"
-};
+}
 
 function renderCalendar() {
     const daysElement = document.getElementById("days");
