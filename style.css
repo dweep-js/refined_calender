@@ -1,0 +1,91 @@
+body {
+    background-color: #4fa5d8;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.calendar {
+ 
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    text-align: center;
+    transition: background-color 0.5s ease, border 0.5s ease;
+    border: 4px solid white;
+    position: relative;
+    border-color: black;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.btn {
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 18px;
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.day {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    position: relative; /* For positioning the cake emoji */
+}
+
+.current {
+    background: rgba(0, 0, 0, 0.2) !important;
+    color: white;
+    font-weight: bold;
+}
+
+.birthday {
+    color: inherit; /* Use the theme color */
+}
+
+.birthday::after {
+    content: "🎂"; /* Add cake emoji */
+    font-size: 12px;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+}
+
+.birthday-label {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: none; /* Hide by default */
+}
