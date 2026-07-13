@@ -1,18 +1,18 @@
 let currentDate = new Date();
 const monthEmojis = ["❄️", "💖", "🌸", "🌼", "🌿", "🌞", "🏖️", "🍉", "🍂", "🎃", "🦃", "🎄"];
 const monthThemes = [
-    { lightPrimary: '#2196F3', darkPrimary: '#90CAF9', lightBg: '#E3F2FD', darkBg: '#0A1929' }, // Jan
-    { lightPrimary: '#E91E63', darkPrimary: '#F48FB1', lightBg: '#FCE4EC', darkBg: '#3E0A1E' }, // Feb
-    { lightPrimary: '#9C27B0', darkPrimary: '#CE93D8', lightBg: '#F3E5F5', darkBg: '#2A0A3A' }, // Mar
-    { lightPrimary: '#FBC02D', darkPrimary: '#FFF59D', lightBg: '#FFFDE7', darkBg: '#3F3500' }, // Apr
-    { lightPrimary: '#4CAF50', darkPrimary: '#A5D6A7', lightBg: '#E8F5E9', darkBg: '#0E2411' }, // May
-    { lightPrimary: '#FF9800', darkPrimary: '#FFCC80', lightBg: '#FFF3E0', darkBg: '#3E1C00' }, // Jun
-    { lightPrimary: '#00BCD4', darkPrimary: '#80DEEA', lightBg: '#E0F7FA', darkBg: '#00252A' }, // Jul
-    { lightPrimary: '#F44336', darkPrimary: '#EF9A9A', lightBg: '#FFEBEE', darkBg: '#3F0F0B' }, // Aug
-    { lightPrimary: '#795548', darkPrimary: '#BCAAA4', lightBg: '#EFEBE9', darkBg: '#231814' }, // Sep
-    { lightPrimary: '#FF5722', darkPrimary: '#FFAB91', lightBg: '#FBE9E7', darkBg: '#441607' }, // Oct
-    { lightPrimary: '#607D8B', darkPrimary: '#B0BEC5', lightBg: '#ECEFF1', darkBg: '#181F23' }, // Nov
-    { lightPrimary: '#D32F2F', darkPrimary: '#EF9A9A', lightBg: '#FFEBEE', darkBg: '#3A0909' }, // Dec
+    { lightPrimary: '#2196F3', darkPrimary: '#1E88E5', lightBg: '#2196F3', darkBg: '#1E88E5' }, // Jan
+    { lightPrimary: '#E91E63', darkPrimary: '#D81B60', lightBg: '#E91E63', darkBg: '#D81B60' }, // Feb
+    { lightPrimary: '#9C27B0', darkPrimary: '#8E24AA', lightBg: '#9C27B0', darkBg: '#8E24AA' }, // Mar
+    { lightPrimary: '#FBC02D', darkPrimary: '#F9A825', lightBg: '#FBC02D', darkBg: '#F9A825' }, // Apr
+    { lightPrimary: '#4CAF50', darkPrimary: '#43A047', lightBg: '#4CAF50', darkBg: '#43A047' }, // May
+    { lightPrimary: '#FF9800', darkPrimary: '#FB8C00', lightBg: '#FF9800', darkBg: '#FB8C00' }, // Jun
+    { lightPrimary: '#00BCD4', darkPrimary: '#00ACC1', lightBg: '#00BCD4', darkBg: '#00ACC1' }, // Jul
+    { lightPrimary: '#ffb64d', darkPrimary: '#f57c00', lightBg: '#ffb64d', darkBg: '#f57c00' }, // Aug
+    { lightPrimary: '#8c6e63', darkPrimary: '#6d4c41', lightBg: '#8c6e63', darkBg: '#6d4c41' }, // Sep
+    { lightPrimary: '#FF5722', darkPrimary: '#F4511E', lightBg: '#FF5722', darkBg: '#F4511E' }, // Oct
+    { lightPrimary: '#607D8B', darkPrimary: '#546E7A', lightBg: '#607D8B', darkBg: '#546E7A' }, // Nov
+    { lightPrimary: '#D32F2F', darkPrimary: '#C62828', lightBg: '#D32F2F', darkBg: '#C62828' }, // Dec
 ];
 let currentUser = null;
 
@@ -23,11 +23,9 @@ function applyMonthTheme() {
     const isDarkMode = document.body.classList.contains('dark-mode');
 
     if (isDarkMode) {
-        root.style.setProperty('--primary-color', theme.darkPrimary);
-        root.style.setProperty('--primary-light', theme.darkBg);
+        root.style.setProperty('--surface-color', theme.darkBg);
     } else {
-        root.style.setProperty('--primary-color', theme.lightPrimary);
-        root.style.setProperty('--primary-light', theme.lightBg);
+        root.style.setProperty('--surface-color', theme.lightBg);
     }
 }
 
