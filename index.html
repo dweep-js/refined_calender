@@ -3,27 +3,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modern Calendar</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4fa5d8">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="calendar">
-        <div class="header">
-            <button class="btn" onclick="prevMonth()">👈</button>
-            <h2 id="month-year"></h2>
-            <button class="btn" onclick="nextMonth()">👉</button>
+<body class="light-mode">
+    <nav class="app-bar">
+        <div class="app-bar-title">Refined Calendar</div>
+        <div class="app-bar-actions">
+            <button id="theme-toggle" class="icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                <span class="material-icons" id="theme-icon">dark_mode</span>
+            </button>
+            <div class="auth-section">
+                <span id="user-greeting" style="display: none;"></span>
+                <button id="auth-btn" class="text-btn" onclick="openLoginModal()">Login</button>
+            </div>
         </div>
-        <div class="weekdays">
-            <div>Mon</div>
-            <div>Tue</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
-            <div>Sun</div>
+    </nav>
+
+    <div class="calendar-container">
+        <div class="calendar">
+            <div class="header">
+                <button class="icon-btn" onclick="prevMonth()">
+                    <span class="material-icons">chevron_left</span>
+                </button>
+                <h2 id="month-year"></h2>
+                <button class="icon-btn" onclick="nextMonth()">
+                    <span class="material-icons">chevron_right</span>
+                </button>
+            </div>
+            <div class="weekdays">
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+                <div>Sun</div>
+            </div>
+            <div class="days" id="days"></div>
+            <div id="birthday-label" class="birthday-label"></div>
         </div>
-        <div class="days" id="days"></div>
-        <div id="birthday-label" class="birthday-label"></div> <!-- Birthday label -->
     </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Login</h2>
+            <p>Sign in to save your own events.</p>
+            <input type="text" id="username-input" placeholder="Enter username">
+            <button class="btn-primary" onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div id="event-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEventModal()">&times;</span>
+            <h2>Add Event</h2>
+            <p id="event-date-display"></p>
+            <input type="text" id="event-name-input" placeholder="Event Name (e.g. Birthday)">
+            <input type="hidden" id="event-date-hidden">
+            <button class="btn-primary" onclick="saveEvent()">Save Event</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

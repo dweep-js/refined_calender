@@ -1,6 +1,6 @@
 let currentDate = new Date();
-const monthColors = ["#B3E5FC", "#FF80AB", "#A5D6A7", "#FFD54F", "#81C784", "#FF7043", "#D32F2F", "#FFB74D", "#8D6E63", "#FF5722", "#9575CD", "#2196F3"];
 const monthEmojis = ["❄️", "💖", "🌸", "🌼", "🌿", "🌞", "🏖️", "🍉", "🍂", "🎃", "🦃", "🎄"];
+let currentUser = null;
 
 const birthdays = {
     "1-15": "🎂 Lila's Birthday",
@@ -35,9 +35,6 @@ function renderCalendar() {
     // Update header
     monthYearElement.innerHTML = `${monthEmojis[currentDate.getMonth()]} <b>${firstDay.toLocaleString('default', { month: 'long' })}</b>`;
 
-    // Update theme
-    document.querySelector(".calendar").style.backgroundColor = monthColors[currentDate.getMonth()];
-
     // Clear previous days
     daysElement.innerHTML = "";
 
@@ -58,39 +55,102 @@ function renderCalendar() {
         // Highlight today's date
         if (i === new Date().getDate() && currentDate.getMonth() === new Date().getMonth()) {
             dayElement.classList.add("current");
-            dayElement.style.backgroundColor = darkenColor(monthColors[currentDate.getMonth()], 0.5);
         }
 
-        // Check for birthdays
-        if (birthdays[dayElement.dataset.date]) {
+        // Check for events
+        const allEvents = getAllEvents();
+        if (allEvents[dayElement.dataset.date]) {
             dayElement.classList.add("birthday");
         }
 
-        dayElement.addEventListener("click", showBirthday);
+        dayElement.addEventListener("click", handleDayClick);
         daysElement.appendChild(dayElement);
     }
 }
 
-function showBirthday(event) {
-    const birthdayLabel = document.getElementById("birthday-label");
-    const selectedDate = event.target.dataset.date;
+function getAllEvents() {
+    let customEvents = {};
+    if (currentUser) {
+        const saved = localStorage.getItem(`events_${currentUser}`);
+        if (saved) {
+            customEvents = JSON.parse(saved);
+        }
+    }
+    // Merge hardcoded birthdays and custom events
+    const merged = { ...birthdays };
+    for (const [date, eventName] of Object.entries(customEvents)) {
+        if (merged[date]) {
+            merged[date] += `<br>✨ ${eventName}`;
+        } else {
+            merged[date] = `✨ ${eventName}`;
+        }
+    }
+    return merged;
+}
 
-    if (birthdays[selectedDate]) {
-        birthdayLabel.innerHTML = `🎉 ${birthdays[selectedDate]}`;
-        birthdayLabel.style.display = "block"; // Show the label
+function handleDayClick(event) {
+    const selectedDate = event.target.dataset.date;
+    const allEvents = getAllEvents();
+    const birthdayLabel = document.getElementById("birthday-label");
+
+    // Show event details
+    if (allEvents[selectedDate]) {
+        let displayHtml = allEvents[selectedDate];
+        if (!displayHtml.includes("🎉") && !displayHtml.includes("✨")) {
+            displayHtml = `🎉 ${displayHtml}`;
+        } else if (displayHtml.startsWith("🎂")) {
+           displayHtml = `🎉 ${displayHtml}`;
+        }
+        birthdayLabel.innerHTML = displayHtml;
+        birthdayLabel.style.display = "block";
     } else {
-        birthdayLabel.style.display = "none"; // Hide the label if no event
+        birthdayLabel.style.display = "none";
+    }
+
+    // Open Add Event modal if user is logged in
+    if (currentUser) {
+        document.getElementById("event-date-display").innerText = `Date: ${selectedDate}`;
+        document.getElementById("event-date-hidden").value = selectedDate;
+        document.getElementById("event-name-input").value = "";
+        document.getElementById("event-modal").style.display = "flex";
     }
 }
 
-function darkenColor(hex, percent) {
-    let num = parseInt(hex.slice(1), 16),
-        amt = Math.round(2.55 * percent * 100),
-        R = (num >> 16) - amt,
-        G = ((num >> 8) & 0x00FF) - amt,
-        B = (num & 0x0000FF) - amt;
-    
-    return `rgb(${Math.max(R, 0)}, ${Math.max(G, 0)}, ${Math.max(B, 0)})`;
+function closeEventModal() {
+    document.getElementById("event-modal").style.display = "none";
+}
+
+function saveEvent() {
+    if (!currentUser) return;
+    const date = document.getElementById("event-date-hidden").value;
+    const eventName = document.getElementById("event-name-input").value.trim();
+
+    if (eventName && date) {
+        // Sanitize input to prevent XSS
+        const sanitizedEventName = eventName.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        let customEvents = {};
+        const saved = localStorage.getItem(`events_${currentUser}`);
+        if (saved) {
+            customEvents = JSON.parse(saved);
+        }
+
+        // Append or set
+        if (customEvents[date]) {
+            customEvents[date] += `, ${sanitizedEventName}`;
+        } else {
+            customEvents[date] = sanitizedEventName;
+        }
+
+        localStorage.setItem(`events_${currentUser}`, JSON.stringify(customEvents));
+        closeEventModal();
+        renderCalendar(); // Re-render to show the new event dot and update label if it was open
+
+        // Auto-show label for the newly added event
+        const birthdayLabel = document.getElementById("birthday-label");
+        const updatedEvents = getAllEvents();
+        birthdayLabel.innerHTML = updatedEvents[date];
+        birthdayLabel.style.display = "block";
+    }
 }
 
 function prevMonth() {
@@ -103,5 +163,94 @@ function nextMonth() {
     renderCalendar();
 }
 
-// Initialize calendar
+// Theme Logic
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.replace('light-mode', 'dark-mode');
+        document.getElementById('theme-icon').innerText = 'light_mode';
+    }
+}
+
+function toggleTheme() {
+    const body = document.body;
+    const icon = document.getElementById('theme-icon');
+    if (body.classList.contains('light-mode')) {
+        body.classList.replace('light-mode', 'dark-mode');
+        icon.innerText = 'light_mode';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        body.classList.replace('dark-mode', 'light-mode');
+        icon.innerText = 'dark_mode';
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+// Auth Logic
+function initAuth() {
+    const savedUser = localStorage.getItem('calendar_user');
+    if (savedUser) {
+        currentUser = savedUser;
+        updateAuthUI();
+    }
+}
+
+function updateAuthUI() {
+    const authBtn = document.getElementById('auth-btn');
+    const userGreeting = document.getElementById('user-greeting');
+
+    if (currentUser) {
+        userGreeting.innerText = `Hi, ${currentUser}`;
+        userGreeting.style.display = 'inline';
+        authBtn.innerText = 'Logout';
+        authBtn.onclick = logout;
+    } else {
+        userGreeting.style.display = 'none';
+        authBtn.innerText = 'Login';
+        authBtn.onclick = openLoginModal;
+    }
+}
+
+function openLoginModal() {
+    document.getElementById('login-modal').style.display = 'flex';
+}
+
+function closeLoginModal() {
+    document.getElementById('login-modal').style.display = 'none';
+}
+
+function login() {
+    const input = document.getElementById('username-input').value.trim();
+    if (input) {
+        currentUser = input;
+        localStorage.setItem('calendar_user', currentUser);
+        updateAuthUI();
+        closeLoginModal();
+        renderCalendar(); // Re-render to show user-specific events
+    }
+}
+
+function logout() {
+    currentUser = null;
+    localStorage.removeItem('calendar_user');
+    updateAuthUI();
+    renderCalendar();
+}
+
+// Initialization
+initTheme();
+initAuth();
 renderCalendar();
+
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(registration => {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      })
+      .catch(err => {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+  });
+}
